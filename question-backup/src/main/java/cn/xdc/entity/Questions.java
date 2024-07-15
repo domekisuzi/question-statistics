@@ -8,10 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -49,9 +46,13 @@ public class Questions implements Serializable {
     private String specialPoints;
 
 
-    @OneToMany(mappedBy = "questions",targetEntity = QuestionKnowledge.class,fetch = FetchType.EAGER)
-
-    private Set<QuestionKnowledge> knowledgePoints =  new HashSet<QuestionKnowledge>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "question_knowledge",
+            joinColumns = @JoinColumn(name = "question_id"),
+            inverseJoinColumns = @JoinColumn(name = "knowledge_id")
+    )
+    private Set<KnowledgePoints> knowledgePoints =  new HashSet<KnowledgePoints>();
 
     @Override
     public String toString() {
@@ -63,8 +64,6 @@ public class Questions implements Serializable {
                 ", isUnknown=" + isUnknown +
                 ", remarks='" + remarks + '\'' +
                 ", knowledgeType='" + knowledgeType + '\'' +
-                ", specialPoints='" + specialPoints + '\'' +
-                ", knowledgePoints=" + knowledgePoints +
-                '}';
+                ", specialPoints='" + specialPoints  + '}';
     }
 }

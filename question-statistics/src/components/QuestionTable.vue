@@ -43,11 +43,11 @@
       <el-table-column prop="remarks" label="备注"></el-table-column>
       <el-table-column prop="knowledgeType" label="知识点类型"></el-table-column>
       <el-table-column prop="specialPoints" label="特殊点"></el-table-column>
-      <el-table-column fixed="right" label="操作" width="120">
-        <template #default="scope">
-          <el-button @click="deleteQuestion(scope.row.id)" type="text" size="small">删除</el-button>
-        </template>
-      </el-table-column>
+<!--      <el-table-column fixed="right" label="操作" width="120">-->
+<!--        <template #default="scope">-->
+<!--          <el-button @click="deleteQuestion(scope.row.id)" type="text" size="small">删除</el-button>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
     </el-table>
 
     <el-pagination

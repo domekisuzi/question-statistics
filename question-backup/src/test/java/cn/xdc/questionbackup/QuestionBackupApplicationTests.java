@@ -1,7 +1,7 @@
 package cn.xdc.questionbackup;
 
 import cn.xdc.entity.KnowledgePoints;
-import cn.xdc.entity.QuestionKnowledge;
+
 import cn.xdc.entity.Questions;
 import cn.xdc.mapper.QuestionsMapper;
 import cn.xdc.repository.KnowledgePointRepository;
@@ -21,12 +21,10 @@ class QuestionBackupApplicationTests {
     void contextLoads() {
         for (Questions questions : questionRepository.findAll()) {
 
-            for (QuestionKnowledge questionKnowledge : questions.getKnowledgePoints()) {
-                System.out.println(questions.toString() + questionKnowledge.getKnowledgePoints());
+            for (KnowledgePoints knowledgePoints : questions.getKnowledgePoints()) {
+                System.out.println(questions.toString() + knowledgePoints.toString());
             }
         }
-
-
     }
 
 }

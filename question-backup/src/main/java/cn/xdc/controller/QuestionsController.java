@@ -59,10 +59,10 @@ public class QuestionsController {
     }
 
     // 删除问题
-    @DeleteMapping("/{id}")
-    public void deleteQuestion(@PathVariable Long id) {
-        questionsService.removeById(id);
-    }
+//    @DeleteMapping("/{id}")
+//    public void deleteQuestion(@PathVariable Long id) {
+//        questionsService.removeById(id);
+//    }
 
     @GetMapping("/page")
     public Page<Questions> getPageOfQuestions(
