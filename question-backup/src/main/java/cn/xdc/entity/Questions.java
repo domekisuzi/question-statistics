@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,6 +53,9 @@ public class Questions implements Serializable {
             joinColumns = @JoinColumn(name = "question_id"),
             inverseJoinColumns = @JoinColumn(name = "knowledge_id")
     )
+
+
+    @JsonIgnoreProperties({"questions"})
     private Set<KnowledgePoints> knowledgePoints =  new HashSet<KnowledgePoints>();
 
     @Override

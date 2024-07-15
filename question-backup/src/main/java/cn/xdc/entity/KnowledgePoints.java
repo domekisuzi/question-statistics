@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,7 +50,7 @@ public class KnowledgePoints implements Serializable {
 
 
     @ManyToMany(mappedBy = "knowledgePoints",fetch = FetchType.EAGER)
-
+    @JsonIgnoreProperties({"knowledgePoints"})
     private Set<Questions> questions =  new HashSet<Questions>();
 
     @Override
