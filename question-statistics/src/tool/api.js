@@ -22,8 +22,7 @@ export  const insertQuestion = async  (newQuestion) =>{
     );
 }
 
-// 获取知识点列表
-
+// 获取知识点列表,便于添加的时候使用
 
 export  const getKnowledgeList = async () => {
     return instance.get('/knowledgePoints')

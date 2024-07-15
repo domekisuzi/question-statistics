@@ -13,9 +13,9 @@
         <el-form-item label="Guessed">
           <el-checkbox v-model="newQuestion.isGuess"></el-checkbox>
         </el-form-item>
-                <el-form-item label="Completely Unknown">
-                  <el-checkbox v-model="newQuestion.isUnknown"></el-checkbox>
-                </el-form-item>
+        <el-form-item label="Completely Unknown">
+          <el-checkbox v-model="newQuestion.isUnknown"></el-checkbox>
+        </el-form-item>
         <el-form-item label="Remarks">
           <el-input v-model="newQuestion.remarks"></el-input>
         </el-form-item>
@@ -24,6 +24,25 @@
         </el-form-item>
         <el-form-item label="Special Points">
           <el-input v-model="newQuestion.specialPoints"></el-input>
+        </el-form-item>
+        <el-form-item label="Knowledge Points">
+          <el-select v-model="newQuestion.knowledgePoints"
+                     multiple placeholder="请选择知识点"
+          :max-collapse-tags="3"
+          collapse-tags
+          collapse-tags-tooltip
+          >
+
+            <el-option
+                v-for="knowledge in allKnowledgePoints"
+                :key="knowledge.id"
+                :label="knowledge.point"
+                :value="knowledge.point"
+            >
+              <el-tag :style="getTagStyle(knowledge)" size="small">{{ knowledge.point }}</el-tag>
+            </el-option>
+
+          </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -39,15 +58,25 @@
       <el-table-column prop="isCorrect" label="对"></el-table-column>
       <el-table-column prop="isWrong" label="错"></el-table-column>
       <el-table-column prop="isGuess" label="猜"></el-table-column>
-            <el-table-column prop="isUnknown" label="完全不会"></el-table-column>
+      <el-table-column prop="isUnknown" label="完全不会"></el-table-column>
       <el-table-column prop="remarks" label="备注"></el-table-column>
       <el-table-column prop="knowledgeType" label="知识点类型"></el-table-column>
       <el-table-column prop="specialPoints" label="特殊点"></el-table-column>
-<!--      <el-table-column fixed="right" label="操作" width="120">-->
-<!--        <template #default="scope">-->
-<!--          <el-button @click="deleteQuestion(scope.row.id)" type="text" size="small">删除</el-button>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <el-table-column label="知识点">
+        <template #default="scope">
+          <div v-if="scope.row.knowledgePoints.length">
+            <el-tag
+                v-for="(knowledge, index) in scope.row.knowledgePoints"
+                :key="index"
+                :style="getTagStyle(knowledge)"
+                class="tag-margin"
+            >
+              {{ knowledge.point }}
+            </el-tag>
+          </div>
+          <div v-else>无</div>
+        </template>
+      </el-table-column>
     </el-table>
 
     <el-pagination
@@ -55,7 +84,8 @@
         :current-page="currentPage"
         :page-size="pageSize"
         layout="prev, pager, next"
-        :total="totalQuestions">
+        :total="totalQuestions"
+    >
     </el-pagination>
   </div>
 </template>
@@ -63,43 +93,60 @@
 <script setup>
 import {ref, reactive, onMounted, toRaw} from 'vue';
 import instance from "@/axios.js";
-import {getTableList, insertQuestion} from "@/tool/api.js";
-
+import {getKnowledgeList, getTableList, insertQuestion} from "@/tool/api.js";
 
 const dialogVisible = ref(false);
 const questions = ref([]);
+const allKnowledgePoints = ref([]);
 const newQuestion = reactive({
-      isCorrect: true,
-      isWrong: false,
-      isGuess: false,
-      isUnknown: false,
-      // completelyUnknown:false,
-      remarks: "1",
-      knowledgeType: "1",
-      specialPoints: "1"
-    }
-);
+  isCorrect: true,
+  isWrong: false,
+  isGuess: false,
+  isUnknown: false,
+  remarks: "备注",
+  knowledgeType: "暂时禁用",
+  specialPoints: "特别注意点",
+  knowledgePoints: []
+});
 const currentPage = ref(0);
 const pageSize = ref(15);
 const totalQuestions = ref(0);
 
 const fetchQuestions = async () => {
   try {
-    const response = await getTableList(currentPage,pageSize)
-    console.log(response.data)
+    const response = await getTableList(currentPage.value, pageSize.value);
+    console.log(response.data);
     questions.value = response.data.content;
     totalQuestions.value = response.data.totalElements;
   } catch (error) {
     console.error(error);
   }
 };
+
+const fetchKnowledgePoints = async () => {
+  try {
+    const response = await getKnowledgeList();
+    console.log(response.data);
+    allKnowledgePoints.value = response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const openDialog = () => {
   dialogVisible.value = true;
 };
 
 const addQuestion = async () => {
   try {
-    await insertQuestion(toRaw(newQuestion))
+    const questionToAdd = toRaw(newQuestion);
+    questionToAdd.knowledgePoints = questionToAdd.knowledgePoints.map(point => ({
+      id: point.id,
+      chapter: point.chapter,
+      point: point.point,
+      projectId: point.projectId
+    }));
+    await insertQuestion(questionToAdd);
     dialogVisible.value = false;
     fetchQuestions();
   } catch (error) {
@@ -111,24 +158,29 @@ const editQuestion = async (row, column, cell, event) => {
   // 编辑题目的逻辑可以在这里实现
 };
 
-// TODO("delete操作将会导致整个题目的id顺序出现异常，因此不提供删除题目功能")
-// const deleteQuestion = async (id) => {
-//   try {
-//     await instance.delete(`/questions/${id}`);
-//     fetchQuestions();
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
-
 const handlePageChange = (page) => {
   currentPage.value = page;
   fetchQuestions();
 };
 
+// Function to generate a color based on the knowledge point's chapter and projectId
+const generateColor = (chapter, projectId) => {
+  const hash = (chapter + projectId).split('').reduce((acc, char) => char.charCodeAt(0) + ((acc << 5) - acc), 0);
+  const hue = Math.abs(hash) % 360; // Ensure hue is within 0-360
+  const saturation = 60 + (Math.abs(hash) % 20); // Ensure saturation is within 60-80%
+  const lightness = 70 + (Math.abs(hash) % 10); // Ensure lightness is within 70-80%
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+};
+
+const getTagStyle = (knowledge) => {
+  return {
+    'background-color': generateColor(knowledge.chapter, knowledge.projectId)
+  };
+};
 
 onMounted(() => {
   fetchQuestions();
+  fetchKnowledgePoints();
 });
 </script>
 
@@ -144,5 +196,9 @@ onMounted(() => {
 .el-table {
   width: 80%;
   height: 80%;
+}
+
+.tag-margin {
+  margin: 0 2px;
 }
 </style>
