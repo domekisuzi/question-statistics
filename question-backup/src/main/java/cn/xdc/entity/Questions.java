@@ -29,6 +29,7 @@ public class Questions implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
@@ -46,6 +47,7 @@ public class Questions implements Serializable {
 
     private String specialPoints;
 
+    private Integer questionNumber;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -68,6 +70,8 @@ public class Questions implements Serializable {
                 ", isUnknown=" + isUnknown +
                 ", remarks='" + remarks + '\'' +
                 ", knowledgeType='" + knowledgeType + '\'' +
-                ", specialPoints='" + specialPoints  + '}';
+                ", specialPoints='" + specialPoints + '\'' +
+                ", questionNumber=" + questionNumber +
+                '}';
     }
 }

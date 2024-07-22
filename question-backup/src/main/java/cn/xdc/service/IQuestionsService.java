@@ -19,4 +19,6 @@ import java.util.List;
 public interface IQuestionsService extends IService<Questions> {
 
       Page<Questions> findAll(Pageable pageable);
+
+    Questions addQuestion(Questions question);
 }

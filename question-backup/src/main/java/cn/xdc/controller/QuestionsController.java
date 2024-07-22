@@ -47,7 +47,7 @@ public class QuestionsController {
     @PostMapping
     public void saveQuestion(@RequestBody Questions question) {
 
-        questionsService.save(question);
+        questionsService.addQuestion(question);
     }
 
 

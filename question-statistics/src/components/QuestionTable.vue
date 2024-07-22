@@ -26,18 +26,22 @@
           <el-input v-model="newQuestion.specialPoints"></el-input>
         </el-form-item>
         <el-form-item label="Knowledge Points">
-          <el-select v-model="newQuestion.knowledgePoints"
+<!--          指定el-selectd 的 value-key使得option在选择时能区分，这在双向绑定的内容时对象时必须指定 -->
+          <el-select
+              v-model="newQuestion.knowledgePoints"
                      multiple placeholder="请选择知识点"
           :max-collapse-tags="3"
           collapse-tags
           collapse-tags-tooltip
+
+              value-key="id"
           >
 
             <el-option
                 v-for="knowledge in allKnowledgePoints"
                 :key="knowledge.id"
                 :label="knowledge.point"
-                :value="knowledge.point"
+                :value="knowledge"
             >
               <el-tag :style="getTagStyle(knowledge)" size="small">{{ knowledge.point }}</el-tag>
             </el-option>
@@ -54,7 +58,7 @@
     </el-dialog>
 
     <el-table :data="questions" border style="width: 80%" @cell-click="editQuestion">
-      <el-table-column prop="id" label="题号" width="50"></el-table-column>
+      <el-table-column prop="questionNumber" label="题号" width="50"></el-table-column>
       <el-table-column prop="isCorrect" label="对"></el-table-column>
       <el-table-column prop="isWrong" label="错"></el-table-column>
       <el-table-column prop="isGuess" label="猜"></el-table-column>
@@ -106,7 +110,8 @@ const newQuestion = reactive({
   remarks: "备注",
   knowledgeType: "暂时禁用",
   specialPoints: "特别注意点",
-  knowledgePoints: []
+  knowledgePoints: [],
+  questionNumber: 1
 });
 const currentPage = ref(0);
 const pageSize = ref(15);
@@ -139,13 +144,22 @@ const openDialog = () => {
 
 const addQuestion = async () => {
   try {
+    // 更新total value 的值
+    await fetchQuestions()
+
     const questionToAdd = toRaw(newQuestion);
-    questionToAdd.knowledgePoints = questionToAdd.knowledgePoints.map(point => ({
+    questionToAdd.questionNumber = totalQuestions.value + 1
+    questionToAdd.knowledgePoints = questionToAdd.knowledgePoints.map(point => (
+        {
       id: point.id,
       chapter: point.chapter,
       point: point.point,
       projectId: point.projectId
-    }));
+    })
+
+
+    );
+    console.log(questionToAdd)
     await insertQuestion(questionToAdd);
     dialogVisible.value = false;
     fetchQuestions();

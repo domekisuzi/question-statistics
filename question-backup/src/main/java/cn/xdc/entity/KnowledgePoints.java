@@ -28,7 +28,7 @@ import lombok.Setter;
 public class KnowledgePoints implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    @GeneratedValue
     @Id
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;

@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @SpringBootTest
@@ -29,25 +30,27 @@ class QuestionBackupApplicationTests {
     private IQuestionsService questionsService;
     @Test
     void contextLoads() {
+        Questions questions = new Questions();
+        questions.setIsCorrect(true);
+        KnowledgePoints knowledgePoints = new KnowledgePoints();
+        knowledgePoints.setChapter("1");
+        knowledgePoints.setPoint("洛必达法则");
+        knowledgePoints.setProjectId(1);
+        knowledgePoints.setId(1);
+        questions.setSpecialPoints("hhh");
+        questions.setId(5);
+        HashSet<KnowledgePoints> knowledgePoints1 = new HashSet<>();
+        knowledgePoints1.add(knowledgePoints);
+        questions.setKnowledgePoints(  knowledgePoints1);
+        questionsService.addQuestion(questions);
 
-//        for (Questions questions : questionRepository.findAll()) {
+//        ArrayList<Sort.Order> orders = new ArrayList<>();
+//        orders.add(new Sort.Order(Sort.Direction.ASC,"id"));
+//        Page<Questions> all = questionsService.findAll(PageRequest.of(0, 15, Sort.by(orders)));
+//        System.out.println(all.toString());
 //
-//            for (KnowledgePoints knowledgePoints : questions.getKnowledgePoints()) {
-//                System.out.println(questions.toString() + knowledgePoints.toString());
-//            }
-//        }
 
 
-        ArrayList<Sort.Order> orders = new ArrayList<>();
-        orders.add(new Sort.Order(Sort.Direction.ASC,"id"));
-        Page<Questions> all = questionsService.findAll(PageRequest.of(0, 15, Sort.by(orders)));
-        System.out.println(all.toString());
-//        for (Questions questions : all) {
-//
-//            for (KnowledgePoints knowledgePoints : questions.getKnowledgePoints()) {
-//                System.out.println(questions.toString() + knowledgePoints.toString());
-//            }
-//        }
     }
 
 }
