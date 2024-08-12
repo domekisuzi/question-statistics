@@ -50,6 +50,7 @@ public class QuestionsServiceImpl extends ServiceImpl<QuestionsMapper, Questions
                     .ifPresent(attachedKnowledgePoints::add);
         }
 
+
         question.setKnowledgePoints(new HashSet<>(attachedKnowledgePoints)  );
         return questionRepository.save(question);
     }
