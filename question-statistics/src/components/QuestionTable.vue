@@ -33,10 +33,9 @@
           :max-collapse-tags="3"
           collapse-tags
           collapse-tags-tooltip
-
               value-key="id"
           >
-
+          >
             <el-option
                 v-for="knowledge in allKnowledgePoints"
                 :key="knowledge.id"
@@ -113,13 +112,13 @@ const newQuestion = reactive({
   knowledgePoints: [],
   questionNumber: 1
 });
-const currentPage = ref(0);
+const currentPage = ref(1);
 const pageSize = ref(15);
 const totalQuestions = ref(0);
 
 const fetchQuestions = async () => {
   try {
-    const response = await getTableList(currentPage.value, pageSize.value);
+    const response = await getTableList(currentPage.value-1, pageSize.value);
     console.log(response.data);
     questions.value = response.data.content;
     totalQuestions.value = response.data.totalElements;
@@ -174,6 +173,7 @@ const editQuestion = async (row, column, cell, event) => {
 
 const handlePageChange = (page) => {
   currentPage.value = page;
+
   fetchQuestions();
 };
 

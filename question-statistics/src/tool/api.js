@@ -4,10 +4,11 @@ import instance from "@/axios.js";
 // api页面，注意返回的都是response
 // 获取列表 page页的数据
 export const   getTableList = async (currentPage,pageSize) =>{
+    console.log(pageSize +":"+ currentPage)
      return instance.get('/questions/page', {
         params: {
-            page: currentPage.value,
-            size: pageSize.value
+            page: currentPage,
+            size: pageSize
         }
     });
 }

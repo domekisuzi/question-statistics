@@ -71,6 +71,7 @@ public class QuestionsController {
     ) {
 //        排序
         ArrayList<Sort.Order> orders = new ArrayList<>();
+        System.out.println("获取到的id为"+page);
         orders.add(new Sort.Order(Sort.Direction.ASC,"id"));
         Page<Questions> all = questionsService.findAll(PageRequest.of(page, size, Sort.by(orders)));
 

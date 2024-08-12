@@ -44,11 +44,8 @@ class QuestionBackupApplicationTests {
         questions.setKnowledgePoints(  knowledgePoints1);
         questionsService.addQuestion(questions);
 
-//        ArrayList<Sort.Order> orders = new ArrayList<>();
-//        orders.add(new Sort.Order(Sort.Direction.ASC,"id"));
-//        Page<Questions> all = questionsService.findAll(PageRequest.of(0, 15, Sort.by(orders)));
-//        System.out.println(all.toString());
-//
+
+
 
 
     }
